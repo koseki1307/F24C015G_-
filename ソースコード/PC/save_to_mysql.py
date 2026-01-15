@@ -46,16 +46,16 @@ import paho.mqtt.client as mqtt
 
 # MySQL 接続設定（必要に応じて変更）
 DB_HOST = "localhost"
-DB_USER = "koseki"
-DB_PASS = "72e322_Taka_user"
-DB_NAME = "original"
+DB_USER = "****"
+DB_PASS = "****"
+DB_NAME = "****"
 
 # MQTT ブローカー設定（スクリプトAと合わせる）
 MQTT_BROKER_IP = "localhost"
 MQTT_PORT = 1883
 MQTT_KEEP_ALIVE = 60
 
-# 購読するトピック（スクリプトAと合わせる）
+# 購読するトピック
 TOPIC_ENV_BATCH = "sensor/raw/env_batch"
 
 # infrasound(=voltage) の異常判定しきい値 a
@@ -252,3 +252,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
