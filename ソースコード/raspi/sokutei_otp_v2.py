@@ -10,8 +10,7 @@ Raspberry Pi 上で動作する「測定＋MQTT publish 専用」スクリプト
 を 10 Hz で取得し、MQTT ブローカーへ publish する。
 
 ・10件ごとのバッチを常時観測保存用トピックへ publish
-    - sensor/raw/env_batch   ：temp, pres, humi, datetime の配列
-    - sensor/raw/infra_batch ：voltage, datetime の配列
+    - sensor/raw/env_batch   ：temp, pres, humi,voltages, datetime の配列
 
 ・ちょうど「○分00.0秒」のサンプルだけは、
   予測プログラム用トピックへ 1件だけ publish
@@ -34,7 +33,7 @@ import paho.mqtt.client as mqtt
 # ====== 設定 ======
 
 # MQTT ブローカー設定
-MQTT_BROKER_IP   = "192.168.11.9"  # ノートPC等の IP に合わせて変更
+MQTT_BROKER_IP   = "****"  # ノートPC等の IP に合わせて変更
 MQTT_PORT        = 1883
 MQTT_KEEP_ALIVE  = 60
 MQTT_QOS         = 1
@@ -329,3 +328,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
