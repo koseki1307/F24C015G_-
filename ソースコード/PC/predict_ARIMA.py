@@ -56,9 +56,9 @@ MQTT_TOPIC_PRES = os.getenv("MQTT_TOPIC_PRES", "sensor/pres")
 
 # ============================== DB ==============================
 DB_HOST = os.getenv("DB_HOST", "localhost")
-DB_NAME = os.getenv("DB_NAME", "original")
-DB_USER = os.getenv("DB_USER", "koseki")
-DB_PASS = os.getenv("DB_PASS", "72e322_Taka_user")  # ★環境変数推奨
+DB_NAME = os.getenv("DB_NAME", "****")
+DB_USER = os.getenv("DB_USER", "****")
+DB_PASS = os.getenv("DB_PASS", "****")  
 
 FORECAST_TABLE = os.getenv("FORECAST_TABLE", "syuron_pressure_forecast")
 
@@ -582,3 +582,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
