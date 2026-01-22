@@ -24,15 +24,6 @@ program_B_save_env_and_infra_batches.py
     }
   のような形。
 
-改良点（今回反映）:
-- voltage が閾値 a (=ANOMALY_THRESHOLD_A) を超えたか判定
-- 超えた時刻（datetime文字列）を anomaly_times に記録
-- MySQL テーブルに is_anomaly カラムを追加
-- INSERT 時に、超えたら is_anomaly=1 / 超えてなければ 0 を保存
-
-注意:
-- 既に存在する日別テーブルにも is_anomaly を追加できるよう、
-  ensure_table_exists 内で列の存在チェック → 無ければ ALTER TABLE を実行する。
 """
 
 import json
@@ -55,11 +46,12 @@ MQTT_BROKER_IP = "localhost"
 MQTT_PORT = 1883
 MQTT_KEEP_ALIVE = 60
 
-# 購読するトピック
+# 購読するトピック（スクリプトAと合わせる）
 TOPIC_ENV_BATCH = "sensor/raw/env_batch"
 
-# infrasound(=voltage) の異常判定しきい値 a
-ANOMALY_THRESHOLD_A = 0.050  # 例: 0.05[V]（適宜変更）
+# infrasound(=voltage) の異常判定しきい値（今回の静穏データから算出した「平均±4σ」）
+ANOMALY_THRESHOLD_LOW  = 0.00273
+ANOMALY_THRESHOLD_HIGH = 0.00999
 
 
 # ====== MySQL 関係 ======
@@ -199,13 +191,16 @@ class EnvBatchSubscriber:
                 dt = datetime.datetime.strptime(dt_str, "%Y-%m-%d %H:%M:%S.%f")
                 day_str = dt.strftime("%Y%m%d")
 
-                # （追加）閾値判定
-                is_anomaly = 1 if infra > ANOMALY_THRESHOLD_A else 0
+                # （変更）閾値判定：範囲外なら異常
+                is_anomaly = 1 if (infra < ANOMALY_THRESHOLD_LOW or infra > ANOMALY_THRESHOLD_HIGH) else 0
 
-                # （追加）異常時刻を記録（1行＝1時刻なので対応は1対1）
+                # （変更）異常時刻を記録（1行＝1時刻なので対応は1対1）
                 if is_anomaly == 1:
                     self.anomaly_times.append(dt_str)
-                    print(f"[ANOMALY] voltage={infra} > a={ANOMALY_THRESHOLD_A} at {dt_str}")
+                    print(
+                        f"[ANOMALY] voltage={infra} out of range "
+                        f"[{ANOMALY_THRESHOLD_LOW}, {ANOMALY_THRESHOLD_HIGH}] at {dt_str}"
+                    )
 
                 if day_str not in day_to_records:
                     day_to_records[day_str] = []
@@ -252,4 +247,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
