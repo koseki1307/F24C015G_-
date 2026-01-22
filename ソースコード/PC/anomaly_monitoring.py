@@ -12,10 +12,6 @@ monitor_anomaly_terminal.py
   4パターン（両方正常 / 微気圧のみ異常 / 予測のみ異常 / 両方異常）
   に応じたメッセージをターミナルへ出力する。
 
-注意:
-- Gmail通知は行わない（ターミナル出力のみ）
-- ルールは「規模（strong/weak）」ではなく「状態の分類」に基づく
-"""
 
 import time
 from dataclasses import dataclass
@@ -315,3 +311,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
