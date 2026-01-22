@@ -93,26 +93,6 @@ def ensure_table_exists(conn, day_str):
     cur.execute(create_table_query)
     conn.commit()
 
-    # 既存テーブルに is_anomaly が無いケースへの対応（後方互換）
-    # INFORMATION_SCHEMA で列の存在チェック
-    col_check_sql = """
-        SELECT COUNT(*)
-        FROM INFORMATION_SCHEMA.COLUMNS
-        WHERE TABLE_SCHEMA = %s
-          AND TABLE_NAME = %s
-          AND COLUMN_NAME = 'is_anomaly'
-    """
-    cur.execute(col_check_sql, (DB_NAME, table_name))
-    exists = cur.fetchone()[0]
-
-    if exists == 0:
-        alter_sql = f"ALTER TABLE {table_name} ADD COLUMN is_anomaly TINYINT(1) NOT NULL DEFAULT 0;"
-        cur.execute(alter_sql)
-        conn.commit()
-        print(f"[DB] Added column is_anomaly to {table_name}")
-
-    return table_name
-
 
 def insert_samples(conn, table_name, records):
     """
@@ -247,3 +227,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
