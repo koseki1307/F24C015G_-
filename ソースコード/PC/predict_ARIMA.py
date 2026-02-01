@@ -3,15 +3,6 @@
 """
 syuron_predict_pressure_fixed_threshold_with_replacement.py
 
-要件:
-- 予測テーブルは1つ: syuron_pressure_forecast
-- テーブル構造は最小:
-    base_time, target_time, yhat, residual, is_anomaly
-- 閾値は固定 (TH_LO, TH_HI)。閾値情報はDBに保存しない
-- 異常の置換系は残す:
-    - master(=同テーブル)の異常履歴を参照して、学習系列の異常近傍を置換
-    - resid_pool により eps を生成（不足時はフォールバック正規ノイズ）
-    - レジーム判定 (連続片側異常 >= REGIME_K) の場合は置換スキップ
 
 動作:
 - MQTTで (sensor/dt, sensor/pres) を受信し、1分境界の arrival_min を確定
@@ -82,7 +73,7 @@ TH_LO = float(os.getenv("TH_LO", "-0.2967"))
 
 # ============================== 置換 & レジーム ==============================
 REGIME_K = int(os.getenv("REGIME_K_MINUTES", "10"))            # 連続片側異常 >= K でレジーム扱い
-REPLACE_RADIUS_MIN = int(os.getenv("REPLACE_RADIUS_MIN", "3")) # 異常中心±R分を置換
+REPLACE_RADIUS_MIN = int(os.getenv("REPLACE_RADIUS_MIN", "5")) # 異常中心±R分を置換
 RESID_EXCLUDE_RADIUS_MIN = int(os.getenv("RESID_EXCLUDE_RADIUS_MIN", "5"))  # pool更新から除外する半径
 
 # ============================== 残差プール（置換ノイズ源） ==============================
@@ -582,4 +573,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
